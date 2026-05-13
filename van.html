@@ -34,7 +34,6 @@
   --nav-bg: rgba(9,8,5,0.88);
   --card-bg: #1c1810;
   --input-bg: rgba(255,255,255,0.04);
-  --smoke: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='3' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.07'/%3E%3C/svg%3E");
 }
 
 [data-theme="light"] {
@@ -58,7 +57,6 @@
   --nav-bg: rgba(250,246,238,0.92);
   --card-bg: #fff9f0;
   --input-bg: rgba(0,0,0,0.04);
-  --smoke: none;
 }
 
 html { scroll-behavior: smooth; }
@@ -149,7 +147,7 @@ nav.scrolled {
 [data-theme="light"] .theme-toggle .icon-sun { display: block; }
 [data-theme="light"] .theme-toggle .icon-moon { display: none; }
 
-/* Grain / texture */
+/* Grain */
 .grain {
   position: fixed; inset: 0; z-index: 200; pointer-events: none; opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -159,7 +157,7 @@ nav.scrolled {
 
 /* Hero */
 #hero {
-  height: 100vh; min-height: 700px;
+  height: 100vh; min-height: 600px;
   display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden;
 }
@@ -174,6 +172,8 @@ nav.scrolled {
 }
 .hero-img-container {
   position: absolute; inset: 0;
+  /* FIX: pointer-events none so hover doesn't trigger on the whole hero */
+  pointer-events: none;
 }
 .hero-img-slot {
   position: absolute; inset: 0; object-fit: cover;
@@ -181,20 +181,25 @@ nav.scrolled {
   transition: opacity 0.5s;
 }
 [data-theme="light"] .hero-img-slot { opacity: 0.25; }
+
+/* FIX: Upload zone is now a small button, not full-screen overlay */
 .hero-upload-zone {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.3s;
-  background: rgba(0,0,0,0.4); z-index: 2;
+  position: absolute;
+  bottom: 80px; right: 24px;
+  z-index: 4;
+  pointer-events: all;
 }
-.hero-img-container:hover .hero-upload-zone { opacity: 1; }
 .upload-btn {
-  cursor: pointer; border: 1px dashed var(--gold-border-strong);
-  padding: 14px 32px; font-size: 10px; letter-spacing: 4px;
+  cursor: pointer;
+  border: 1px dashed var(--gold-border-strong);
+  padding: 10px 20px; font-size: 9px; letter-spacing: 3px;
   text-transform: uppercase; color: var(--gold);
   transition: background 0.3s;
+  display: inline-block;
+  background: rgba(9,8,5,0.6);
+  backdrop-filter: blur(8px);
 }
-.upload-btn:hover { background: rgba(200,168,75,0.1); }
+.upload-btn:hover { background: rgba(200,168,75,0.15); }
 .upload-btn input[type="file"] { display: none; }
 
 /* Decorative lines */
@@ -400,6 +405,7 @@ section { padding: 120px 64px; }
   display: flex; justify-content: center; gap: 0;
   margin-bottom: 56px;
   border-bottom: 1px solid var(--divider);
+  flex-wrap: wrap;
 }
 .menu-tab {
   font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
@@ -428,10 +434,9 @@ section { padding: 120px 64px; }
   color: var(--text-primary); margin-bottom: 4px;
 }
 .menu-item-desc {
-  font-size: 11px; color: var(--text-faint);
+  font-size: 13px; color: var(--text-faint);
   letter-spacing: 0.5px; line-height: 1.6;
   font-style: italic; font-family: 'EB Garamond', serif;
-  font-size: 13px;
 }
 .menu-item-price {
   font-family: 'Playfair Display', serif;
@@ -545,7 +550,6 @@ section { padding: 120px 64px; }
   display: flex; flex-direction: column; justify-content: center;
   border-left: 1px solid var(--divider);
 }
-[data-theme="light"] .special-content { border-left-color: var(--divider); }
 .special-tag {
   font-size: 9px; letter-spacing: 6px;
   text-transform: uppercase; color: var(--gold);
@@ -766,32 +770,169 @@ footer {
 .reveal-delay-2 { transition-delay: 0.24s; }
 .reveal-delay-3 { transition-delay: 0.36s; }
 
-/* Responsive */
+/* ============================================
+   TABLET (max 1024px)
+   ============================================ */
 @media (max-width: 1024px) {
   nav { padding: 22px 32px; }
   nav.scrolled { padding: 14px 32px; }
   .nav-links { display: none; }
+
   section { padding: 80px 32px; }
+
   #about { grid-template-columns: 1fr; gap: 56px; }
   .about-img-wrap { order: -1; }
+
   #special { grid-template-columns: 1fr; }
   .special-content { padding: 60px 32px; border-left: none; border-top: 1px solid var(--divider); }
+  .special-title { font-size: 36px; }
+
   #contact { grid-template-columns: 1fr; }
   .contact-info { padding: 60px 32px; }
-  .exp-grid { grid-template-columns: 1fr; }
+
+  .exp-grid { grid-template-columns: 1fr 1fr; }
+
   .menu-grid { grid-template-columns: 1fr; }
   .menu-item:nth-child(odd) { padding-right: 0; border-right: none; }
   .menu-item:nth-child(even) { padding-left: 0; }
-  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    padding: 0 32px;
+  }
   .g-item:nth-child(1), .g-item:nth-child(4) { grid-row: span 1; }
+  .g-slot { min-height: 200px; }
+
   .res-form { grid-template-columns: 1fr; }
   .form-group.full { grid-column: span 1; }
   .res-form-actions { grid-column: span 1; }
+
   footer { flex-direction: column; gap: 24px; text-align: center; }
+
   body { cursor: auto; }
   #cursor, #cursor-ring { display: none; }
   .hero-line-left, .hero-line-right { display: none; }
   .corner-tl, .corner-tr, .corner-bl, .corner-br { display: none; }
+
+  .hero-upload-zone { bottom: 60px; right: 16px; }
+}
+
+/* ============================================
+   MOBILE (max 640px)
+   ============================================ */
+@media (max-width: 640px) {
+  /* Nav */
+  nav { padding: 16px 20px; }
+  nav.scrolled { padding: 12px 20px; }
+  .nav-logo { font-size: 18px; letter-spacing: 6px; }
+  .nav-reserve { padding: 8px 14px; font-size: 9px; letter-spacing: 2px; }
+  .theme-toggle { width: 34px; height: 34px; font-size: 14px; }
+  .nav-right { gap: 10px; }
+
+  /* Hero */
+  #hero { min-height: 100svh; }
+  .hero-badge {
+    font-size: 7px; letter-spacing: 3px; margin-bottom: 18px;
+    flex-wrap: wrap; justify-content: center; gap: 6px;
+  }
+  .hero-badge::before, .hero-badge::after { width: 18px; }
+  .hero-title { font-size: clamp(64px, 22vw, 100px); }
+  .hero-tagline { font-size: 13px; margin-top: 14px; }
+  .hero-ornament { margin: 18px 0; }
+  .hero-ornament-line { width: 32px; }
+  .hero-cta { padding: 13px 32px; font-size: 9px; letter-spacing: 3px; }
+  .scroll-hint { bottom: 24px; }
+  .hero-upload-zone { bottom: 50px; right: 12px; }
+  .upload-btn { padding: 8px 14px; font-size: 8px; letter-spacing: 2px; }
+
+  /* Sections */
+  section { padding: 60px 20px; }
+  .section-title { font-size: clamp(28px, 9vw, 42px); }
+  .section-eyebrow { font-size: 8px; letter-spacing: 4px; }
+
+  /* About */
+  #about { gap: 40px; padding: 60px 20px; }
+  .about-text p { font-size: 13px; line-height: 1.85; }
+  .stat-row { gap: 24px; flex-wrap: wrap; margin-top: 28px; }
+  .stat-num { font-size: 32px; }
+  .stat-label { font-size: 8px; }
+  .about-frame-1 { display: none; }
+  .about-frame-2 { display: none; }
+
+  /* Menu */
+  #menu { padding: 60px 20px; }
+  .menu-header { margin-bottom: 36px; }
+  .menu-tab { padding: 10px 16px; font-size: 9px; letter-spacing: 2px; }
+  .menu-tabs { margin-bottom: 32px; }
+  .menu-item-name { font-size: 16px; }
+  .menu-item-desc { font-size: 12px; }
+  .menu-item-price { font-size: 14px; }
+  .menu-item { padding: 18px 0; gap: 12px; }
+
+  /* Gallery */
+  #gallery { padding: 60px 0; }
+  .gallery-header { padding: 0 20px; margin-bottom: 32px; }
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    padding: 0 20px;
+    gap: 3px;
+  }
+  .g-slot { min-height: 140px; }
+  .slot-text { font-size: 8px; letter-spacing: 2px; text-align: center; padding: 0 4px; }
+  .slot-icon { font-size: 16px !important; }
+
+  /* Experience */
+  #experience { padding: 60px 20px; }
+  .exp-grid { grid-template-columns: 1fr; gap: 1px; }
+  .exp-card { padding: 36px 28px; }
+  .exp-num { font-size: 56px; }
+  .exp-title { font-size: 18px; }
+  .exp-desc { font-size: 13px; }
+  .exp-icon-wrap { width: 44px; height: 44px; font-size: 18px; margin-bottom: 16px; }
+
+  /* Special */
+  #special { grid-template-columns: 1fr; }
+  .special-img { min-height: 280px; }
+  .special-content {
+    padding: 48px 20px;
+    border-left: none;
+    border-top: 1px solid var(--divider);
+  }
+  .special-title { font-size: 28px; }
+  .special-desc { font-size: 13px; }
+  .special-price { font-size: 30px; }
+
+  /* Reservation */
+  #reservation { padding: 60px 20px; }
+  #reservation .section-title { margin-bottom: 36px; }
+  .res-form { grid-template-columns: 1fr; gap: 16px; }
+  .form-group.full { grid-column: span 1; }
+  .res-form-actions { grid-column: span 1; }
+  .form-group input, .form-group select, .form-group textarea {
+    font-size: 14px; padding: 13px 14px;
+  }
+
+  /* Contact */
+  #contact { grid-template-columns: 1fr; padding: 0; }
+  .contact-info { padding: 60px 20px; }
+  .contact-details { gap: 28px; margin-top: 36px; }
+  .contact-icon { width: 36px; height: 36px; font-size: 14px; }
+  .contact-value { font-size: 13px; }
+  .hours-block { grid-template-columns: 1fr; }
+  .hours-cell { padding: 14px 12px; }
+  .hours-day { font-size: 8px; }
+  .hours-time { font-size: 14px; }
+  .contact-map { min-height: 280px; }
+
+  /* Footer */
+  footer { padding: 40px 20px; gap: 20px; flex-direction: column; text-align: center; }
+  .footer-logo { font-size: 16px; letter-spacing: 7px; }
+  .footer-copy { font-size: 9px; }
+
+  /* Toast */
+  .toast { bottom: 16px; right: 16px; left: 16px; text-align: center; }
 }
 </style>
 </head>
@@ -825,12 +966,6 @@ footer {
   <div class="hero-bg"></div>
   <div class="hero-img-container">
     <img class="hero-img-slot" id="hero-img" src="" alt="" style="display:none">
-    <div class="hero-upload-zone">
-      <label class="upload-btn">
-        + Ավելացնել գլխավոր նկար
-        <input type="file" accept="image/*" onchange="loadImage(this,'hero-img')">
-      </label>
-    </div>
   </div>
 
   <!-- Corner ornaments -->
@@ -860,6 +995,15 @@ footer {
     </div>
     <a href="#menu" class="hero-cta"><span>Բացահայտել մենյուն</span></a>
   </div>
+
+  <!-- Upload button moved outside the full-screen container -->
+  <div class="hero-upload-zone">
+    <label class="upload-btn">
+      + Գլխավոր նկար
+      <input type="file" accept="image/*" onchange="loadImage(this,'hero-img')">
+    </label>
+  </div>
+
   <div class="scroll-hint">
     <span class="scroll-hint-text">Ոլորել</span>
     <div class="scroll-dot"></div>
@@ -1034,7 +1178,7 @@ footer {
       <span class="exp-num">01</span>
       <div class="exp-icon-wrap">🌿</div>
       <h3 class="exp-title">Սեզոնային եւ Տեղական</h3>
-      <p class="exp-desc">Մենյուն փոխվում է սեզոնի հետ։ </p>
+      <p class="exp-desc">Մենյուն փոխվում է սեզոնի հետ։</p>
     </div>
     <div class="exp-card reveal reveal-delay-1">
       <span class="exp-num">02</span>
@@ -1088,7 +1232,7 @@ footer {
       <span>✦</span>
       <div class="ornament-divider-line"></div>
     </div>
-    <p class="special-desc">Ութ ուտեստ մաքուր արվեստով։ Շեֆ Վանի անձնական դեգուտացիոն մենյուն՝ ճանապարհորդություն եղանակների միջով։ </p>
+    <p class="special-desc">Ութ ուտեստ մաքուր արվեստով։ Շեֆ Վանի անձնական դեգուտացիոն մենյուն՝ ճանապարհորդություն եղանակների միջով։</p>
     <div class="special-price-row">
       <div class="special-price">145,000 դր</div>
       <div class="special-price-note">մեկ անձի համար</div>
@@ -1108,11 +1252,11 @@ footer {
       <div class="ornament-divider-line"></div>
     </div>
   </div>
-  <form class="res-form reveal" 
-  action="mailto:YOUR_GMAIL@gmail.com" 
-  method="POST" 
-  enctype="text/plain">
-      <div class="form-group">
+  <form class="res-form reveal"
+    action="mailto:YOUR_GMAIL@gmail.com"
+    method="POST"
+    enctype="text/plain">
+    <div class="form-group">
       <label>Անուն</label>
       <input type="text" placeholder="Ձեր անունը" required>
     </div>
@@ -1189,7 +1333,7 @@ footer {
         <div class="contact-icon">📞</div>
         <div>
           <p class="contact-label">Հեռախոս</p>
-          <p class="contact-value"><a href="tel:+37412345678">094 899841</a></p>
+          <p class="contact-value"><a href="tel:+37494899841">094 899841</a></p>
         </div>
       </div>
       <div class="contact-item">
@@ -1245,7 +1389,8 @@ footer {
   </div>
 </footer>
 
-<div class="toast" id="toast">✓ Պատվերը ուղարկված է ձեր էլ. փոստով</div>
+<div class="toast" id="toast">✓ Պատվերը ուղարկված է</div>
+
 <script>
 // Cursor
 const cursor = document.getElementById('cursor');
@@ -1304,15 +1449,6 @@ function loadImageSlot(input, slotId) {
   slot.style.position = 'relative';
   slot.innerHTML = '';
   slot.appendChild(img);
-}
-
-// Reservation
-function handleReservation(e) {
-  e.preventDefault();
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 4000);
-  e.target.reset();
 }
 
 // Smooth scroll
